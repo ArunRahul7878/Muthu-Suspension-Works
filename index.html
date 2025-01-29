@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio Data Form</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+    <h2>Enter Your Bio Data</h2>
+    <form id="bioDataForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required><br><br>
+
+        <label for="phone">Your Phone Number:</label>
+        <input type="tel" id="phone" required><br><br>
+
+        <label for="age">Age:</label>
+        <input type="number" id="age" required><br><br>
+
+        <label for="receiverPhone">Send To (WhatsApp Number):</label>
+        <input type="tel" id="receiverPhone" required><br><br>
+
+        <button type="button" onclick="generateAndSendPDF()">Generate PDF & Send</button>
+    </form>
+
+    <script>
+        async function generateAndSendPDF() {
+            const { jsPDF } = window.jspdf;
+            let doc = new jsPDF();
+
+            // Get form values
+            let name = document.getElementById("name").value;
+            let phone = document.getElementById("phone").value;
+            let age = document.getElementById("age").value;
+            let receiverPhone = document.getElementById("receiverPhone").value;
+
+            if (!name || !phone || !age || !receiverPhone) {
+                alert("Please fill in all details.");
+                return;
+            }
+
+            // Generate PDF content
+            doc.text("Bio Data", 20, 20);
+            doc.text(`Name: ${name}`, 20, 40);
+            doc.text(`Phone: ${phone}`, 20, 50);
+            doc.text(`Age: ${age}`, 20, 60);
+
+            // Save PDF as Blob
+            let pdfBlob = doc.output("blob");
+            let pdfUrl = URL.createObjectURL(pdfBlob);
+
+            // Construct WhatsApp URL
+            let whatsappUrl = `https://wa.me/${receiverPhone}?text=Here%20is%20my%20bio%20data:%0A%0AName:%20${name}%0APhone:%20${phone}%0AAge:%20${age}%0A%0A(Please find attached PDF)`;
+
+            // Open WhatsApp link
+            window.open(whatsappUrl, "_blank");
+        }
+    </script>
+
+</body>
+</html>
