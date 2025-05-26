@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-green: #2e7d32;
+      --primary-blue: #1565c0;
+      --accent-pink: #f8bbd0;
+      --light-bg: #f5f7fa;
+      --white: #ffffff;
+      --dark-text: #263238;
+      --gray-text: #607d8b;
+      --border-color: #cfd8dc;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --danger: #f44336;
+      --radius: 10px;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: var(--light-bg);
+      color: var(--dark-text);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 40px;
+      border-top: 6px solid var(--primary-green);
+    }
+
+    .company-header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px dashed var(--border-color);
+    }
+
+    .company-header img {
+      height: 100px;
+      margin-bottom: 15px;
+      border-radius: 50%;
+      box-shadow: var(--shadow);
+      border: 3px solid var(--white);
+      background: var(--white);
+    }
+
+    .company-header .name {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary-green);
+      margin-bottom: 5px;
+      letter-spacing: 0.5px;
+    }
+
+    .company-header .tagline {
+      font-size: 1.1rem;
+      color: var(--primary-blue);
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--primary-blue);
+      margin-bottom: 30px;
+      font-weight: 600;
+      font-size: 1.8rem;
+    }
+
+    h3 {
+      color: var(--primary-green);
+      margin-bottom: 20px;
+      font-weight: 600;
+      font-size: 1.4rem;
+      position: relative;
+      padding-left: 15px;
+    }
+
+    h3::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 5px;
+      height: 20px;
+      width: 5px;
+      background: var(--primary-green);
+      border-radius: 3px;
+    }
+
+    .form-section {
+      background: var(--white);
+      padding: 30px;
+      border-radius: var(--radius);
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 500;
+      color: var(--dark-text);
+      font-size: 15px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 14px 18px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      font-size: 15px;
+      transition: var(--transition);
+      background: var(--white);
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
+    }
+
+    .work-committed-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 15px;
+      background: rgba(200, 230, 201, 0.3);
+      border-radius: var(--radius);
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .work-committed-row input[type="checkbox"] {
+      margin-right: 10px;
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary-green);
+    }
+
+    .work-committed-row label {
+      margin-right: 10px;
+      min-width: 200px;
+      font-weight: 500;
+      color: var(--dark-text);
+      flex: 1;
+    }
+
+    .work-committed-row select,
+    .work-committed-row input[type="text"],
+    .work-committed-row input[type="number"] {
+      margin-left: 0;
+      width: 150px;
+      padding: 12px 15px;
+      flex: none;
+    }
+
+    .error {
+      color: var(--danger);
+      font-size: 0.85rem;
+      margin-top: 5px;
+      display: block;
+    }
+
+    .dynamic-services {
+      display: flex;
+      gap: 25px;
+    }
+
+    .dynamic-left {
+      flex: 1;
+      max-width: 220px;
+      padding-top: 10px;
+    }
+
+    .dynamic-right {
+      flex: 3;
+      background: rgba(200, 230, 201, 0.2);
+      border-radius: var(--radius);
+      padding: 25px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0, 0, 0, 0.03);
+    }
+
+    .other-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      align-items: center;
+      padding: 20px;
+      margin-bottom: 20px;
+      background: var(--white);
+      border-radius: var(--radius);
+      position: relative;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    }
+
+    .other-row::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      background: var(--accent-pink);
+      border-radius: var(--radius) 0 0 var(--radius);
+    }
+
+    .remove-btn {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      background: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .remove-btn:hover {
+      transform: scale(1.1);
+      background: #d32f2f;
+    }
+
+    #addOtherServiceBtn {
+      background: var(--primary-green);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      padding: 12px 25px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: var(--transition);
+      margin-top: 15px;
+      box-shadow: 0 2px 6px rgba(46, 125, 50, 0.2);
+    }
+
+    #addOtherServiceBtn:hover {
+      background: #1b5e20;
+      transform: translateY(-2px);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 20px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 14px 28px;
+      border: none;
+      border-radius: var(--radius);
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 160px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    button i {
+      font-size: 18px;
+    }
+
+    #submitBtn {
+      background: var(--primary-green);
+      border: 1px solid #1b5e20;
+    }
+
+    #submitBtn:hover {
+      background: #1b5e20;
+      transform: translateY(-2px);
+    }
+
+    #updateBtn {
+      background: var(--primary-blue);
+      border: 1px solid #0d47a1;
+      display: none;
+    }
+
+    #updateBtn:hover {
+      background: #0d47a1;
+      transform: translateY(-2px);
+    }
+
+    #fetchBtn {
+      background: var(--warning);
+      border: 1px solid #e65100;
+    }
+
+    #fetchBtn:hover {
+      background: #e65100;
+      transform: translateY(-2px);
+    }
+
+    #clearBtn {
+      background: var(--danger);
+      border: 1px solid #c62828;
+    }
+
+    #clearBtn:hover {
+      background: #c62828;
+      transform: translateY(-2px);
+    }
+
+    .calculate-btn {
+      background: #2196F3;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      margin-left: 10px;
+      font-size: 1em;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .calculate-btn:hover {
+      background: #1565c0;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      font-size: 1.1em;
+      margin: 20px 0;
+      color: var(--primary-blue);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .container { padding: 25px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .dynamic-services { flex-direction: column; }
+      .dynamic-left { max-width: 100%; }
+      .work-committed-row { flex-direction: column; align-items: flex-start; gap: 15px; }
+      .work-committed-row label { min-width: 100%; }
+      .work-committed-row select,
+      .work-committed-row input[type="text"],
+      .work-committed-row input[type="number"] { width: 100%; }
+      .other-row { grid-template-columns: 1fr; gap: 15px; }
+      .buttons { flex-direction: column; }
+      button { width: 100%; }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <div class="company-header">
+      <img src="https://raw.githubusercontent.com/ArunRahul7878/Muthu-Suspension-Works/main/MSW_logo.jpg" alt="MSW Logo">
+      <h1 class="name">Muthu Suspension Works</h1>
+      <p class="tagline">Smooth Drive, Every Time</p>
+    </div>
+
+    <h2>Customer Job Registration</h2>
+
+    <form id="customerForm" autocomplete="off">
+      <input type="hidden" id="jobId">
+
+      <!-- CUSTOMER DETAILS -->
+      <div class="form-section">
+        <h3>Customer Details</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="customerName">Customer Name</label>
+            <input type="text" id="customerName" placeholder="Enter full name">
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="text" id="phone" placeholder="Enter phone number">
+          </div>
+          <div class="form-group">
+            <label for="carNumber">Car Number <span class="error" id="carNumberError"></span></label>
+            <input type="text" id="carNumber" required placeholder="e.g. TN 01 AB 1234">
+          </div>
+          <div class="form-group">
+            <label for="carModel">Car Model</label>
+            <input type="text" id="carModel" placeholder="e.g. Hyundai Creta">
+          </div>
+          <div class="form-group">
+            <label for="place">Place</label>
+            <input type="text" id="place" placeholder="Enter location">
+          </div>
+          <div class="form-group">
+            <label for="source">Source</label>
+            <select id="source">
+              <option value="">Select source</option>
+              <option value="Recurring">Recurring Customer</option>
+              <option value="Referral">Referral</option>
+              <option value="Google Search">Google Search</option>
+              <option value="JustDial">JustDial</option>
+              <option value="Youtube">YouTube</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- WORK COMMITTED SECTION -->
+      <div class="form-section">
+        <h3>Work Committed</h3>
+        <div class="work-committed-row">
+          <input type="checkbox" id="chkShockAbsorber" onchange="toggleDropdown('ddShockAbsorber','chkShockAbsorber')">
+          <label for="chkShockAbsorber">Shock Absorber Reconditioning</label>
+          <select id="ddShockAbsorber" class="hidden">
+            <option value="">Select option</option>
+            <option value="Front Both">Front Both</option>
+            <option value="Rear Both">Rear Both</option>
+            <option value="All Shocks">All Shocks</option>
+            <option value="Front Left">Front Left</option>
+            <option value="Front Right">Front Right</option>
+            <option value="Rear Left">Rear Left</option>
+            <option value="Rear Right">Rear Right</option>
+          </select>
+          <input type="number" id="rateShockAbsorber" placeholder="Amount (₹)">
+        </div>
+        <div class="work-committed-row">
+          <input type="checkbox" id="chkDriveshaft" onchange="toggleDropdown('ddDriveshaft','chkDriveshaft')">
+          <label for="chkDriveshaft">DriveShaft</label>
+          <select id="ddDriveshaft" class="hidden">
+            <option value="">Select option</option>
+            <option value="Left">Left</option>
+            <option value="Right">Right</option>
+            <option value="Left and Right">Left and Right</option>
+          </select>
+          <input type="number" id="rateDriveshaft" placeholder="Amount (₹)">
+        </div>
+        <div class="work-committed-row">
+          <input type="checkbox" id="chkSteeringRack">
+          <label for="chkSteeringRack">Steering Rack Service</label>
+          <input type="number" id="rateSteeringRack" placeholder="Amount (₹)">
+        </div>
+      </div>
+
+      <!-- DYNAMIC "OTHER SERVICES & SPARE PARTS" -->
+      <div class="form-section">
+        <div class="dynamic-services">
+          <div class="dynamic-left">
+            <div class="checkbox-group">
+              <input type="checkbox" id="chkOtherServicesMain">
+              <label for="chkOtherServicesMain" style="font-weight:600;">Other Services & Spare Parts</label>
+            </div>
+          </div>
+          <div class="dynamic-right" id="otherServicesSection" style="display:none;">
+            <div id="otherServicesList"></div>
+            <button type="button" id="addOtherServiceBtn">
+              <i class="fas fa-plus-circle"></i> Add Service
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAYMENT DETAILS -->
+      <div class="form-section">
+        <h3>Payment Details</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="date">Date</label>
+            <input type="date" id="date">
+          </div>
+          <div class="form-group amount-group">
+            <label for="amountBilled">Amount Billed (₹)</label>
+            <input type="number" id="amountBilled" placeholder="Enter total amount">
+            <button type="button" class="calculate-btn" onclick="updateTotalAmount()">
+              <i class="fas fa-calculator"></i> Recalculate
+            </button>
+          </div>
+          <div class="form-group">
+            <label for="modeOfPayment">Payment Mode</label>
+            <select id="modeOfPayment">
+              <option value="">Select payment mode</option>
+              <option>Cash</option>
+              <option>Gpay</option>
+              <option>Paytm</option>
+              <option>PhonePe</option>
+              <option>Bank Transfer</option>
+              <option>Credit Card</option>
+              <option>Debit Card</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="paidTo">Paid To</label>
+            <select id="paidTo">
+              <option value="">Select recipient</option>
+              <option>Cash</option>
+              <option>Arun</option>
+              <option>Elangovan</option>
+              <option>Priya</option>
+              <option>Sumathi</option>
+              <option>Lokesh</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="loading" id="loadingIndicator">
+        Processing your request...
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="buttons">
+        <button type="button" id="submitBtn">
+          <i class="fas fa-save"></i> Submit
+        </button>
+        <button type="button" id="updateBtn">
+          <i class="fas fa-sync-alt"></i> Update
+        </button>
+        <button type="button" id="fetchBtn">
+          <i class="fas fa-search"></i> Fetch
+        </button>
+        <button type="button" id="clearBtn">
+          <i class="fas fa-trash-alt"></i> Clear
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // ===== Loading Indicator =====
+    function showLoading() {
+      document.getElementById('loadingIndicator').style.display = 'block';
+    }
+    function hideLoading() {
+      document.getElementById('loadingIndicator').style.display = 'none';
+    }
+
+    // ===== Utilities =====
+    function toggleDropdown(id, chkId){
+      document.getElementById(id).style.display = document.getElementById(chkId).checked ? 'block':'none';
+    }
+
+    // ===== Dynamic "Other Services" Logic =====
+    const chkOtherMain     = document.getElementById('chkOtherServicesMain');
+    const otherSection     = document.getElementById('otherServicesSection');
+    const otherList        = document.getElementById('otherServicesList');
+    const addOtherBtn      = document.getElementById('addOtherServiceBtn');
+    let otherServices = [];
+    const DEFAULT_SERVICES = ["Fitting", "Changing", "Total Labour"];
+    const DEFAULT_SPARES   = ["Front Shock", "Rear Shock", "Lower Arm Bush", "Steering Ball Joint", "Other"];
+    const DEFAULT_VENDORS  = ["Ramesh Spares","Kavitha Spares","Universal Traders","MSW","Others"];
+
+    function addOtherServiceRow(data={}) {
+      const id = Date.now() + Math.floor(Math.random()*10000); // avoid id collision
+      const div = document.createElement('div');
+      div.className = 'other-row';
+      div.id = `service-row-${id}`;
+
+      // Service dropdown
+      const serviceDiv = document.createElement('div');
+      serviceDiv.className = 'form-group';
+      serviceDiv.innerHTML = `
+        <label>Service Type</label>
+        <select class="service-type">
+          <option value="">Select service</option>
+          ${DEFAULT_SERVICES.map(s => `<option value="${s}" ${data.service === s ? 'selected' : ''}>${s}</option>`).join('')}
+        </select>
+      `;
+
+      // Spare part input with datalist
+      const spareDiv = document.createElement('div');
+      spareDiv.className = 'form-group';
+      spareDiv.innerHTML = `
+        <label>Spare Part</label>
+        <input type="text" class="spare-part" value="${data.sparePart || ''}" list="spare-list-${id}">
+        <datalist id="spare-list-${id}">
+          ${DEFAULT_SPARES.map(s => `<option value="${s}">${s}</option>`).join('')}
+        </datalist>
+      `;
+
+      // Vendor dropdown
+      const vendorDiv = document.createElement('div');
+      vendorDiv.className = 'form-group';
+      vendorDiv.innerHTML = `
+        <label>Vendor Name</label>
+        <select class="vendor-name">
+          <option value="">Select vendor</option>
+          ${DEFAULT_VENDORS.map(v => `<option value="${v}" ${data.vendor === v ? 'selected' : ''}>${v}</option>`).join('')}
+        </select>
+      `;
+
+      // Amount input
+      const amountDiv = document.createElement('div');
+      amountDiv.className = 'form-group';
+      amountDiv.innerHTML = `
+        <label>Amount (₹)</label>
+        <input type="number" class="service-amount" value="${data.amount || ''}" placeholder="0.00">
+      `;
+
+      // Remove button
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'remove-btn';
+      removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+      removeBtn.onclick = () => {
+        otherServices = otherServices.filter(s => s.id !== id);
+        div.remove();
+      };
+
+      div.appendChild(serviceDiv);
+      div.appendChild(spareDiv);
+      div.appendChild(vendorDiv);
+      div.appendChild(amountDiv);
+      div.appendChild(removeBtn);
+
+      otherList.appendChild(div);
+
+      // Add to our services array
+      otherServices.push({
+        id,
+        service: data.service || '',
+        sparePart: data.sparePart || '',
+        vendor: data.vendor || '',
+        amount: data.amount || ''
+      });
+
+      // Add event listeners
+      const serviceSelect = div.querySelector('.service-type');
+      const spareInput = div.querySelector('.spare-part');
+      const vendorSelect = div.querySelector('.vendor-name');
+      const amountInput = div.querySelector('.service-amount');
+
+      serviceSelect.addEventListener('change', () => {
+        const service = otherServices.find(s => s.id === id);
+        if (service) service.service = serviceSelect.value;
+      });
+
+      spareInput.addEventListener('input', () => {
+        const service = otherServices.find(s => s.id === id);
+        if (service) service.sparePart = spareInput.value;
+      });
+
+      vendorSelect.addEventListener('change', () => {
+        const service = otherServices.find(s => s.id === id);
+        if (service) service.vendor = vendorSelect.value;
+      });
+
+      amountInput.addEventListener('input', () => {
+        const service = otherServices.find(s => s.id === id);
+        if (service) service.amount = amountInput.value;
+      });
+    }
+
+    chkOtherMain.addEventListener('change', () => {
+      otherSection.style.display = chkOtherMain.checked ? 'block' : 'none';
+      if (chkOtherMain.checked && otherServices.length === 0) {
+        addOtherServiceRow();
+      }
+    });
+
+    addOtherBtn.addEventListener('click', () => addOtherServiceRow());
+
+    // ===== Static Committed Logic =====
+    function getStaticWorkRows() {
+      const rows = [];
+      if (document.getElementById('chkShockAbsorber').checked) {
+        rows.push({
+          workType: 'Shock Absorber',
+          detail: document.getElementById('ddShockAbsorber').value,
+          rate: document.getElementById('rateShockAbsorber').value
+        });
+      }
+      if (document.getElementById('chkDriveshaft').checked) {
+        rows.push({
+          workType: 'DriveShaft',
+          detail: document.getElementById('ddDriveshaft').value,
+          rate: document.getElementById('rateDriveshaft').value
+        });
+      }
+      if (document.getElementById('chkSteeringRack').checked) {
+        rows.push({
+          workType: 'Steering Rack Service',
+          detail: '',
+          rate: document.getElementById('rateSteeringRack').value
+        });
+      }
+      return rows;
+    }
+
+    // ===== Amount Calculation & Math =====
+    function updateTotalAmount() {
+      let sum = 0;
+      // Sum static service rates
+      const rateShockAbsorber = Number(document.getElementById('rateShockAbsorber')?.value) || 0;
+      const rateDriveshaft = Number(document.getElementById('rateDriveshaft')?.value) || 0;
+      const rateSteeringRack = Number(document.getElementById('rateSteeringRack')?.value) || 0;
+      sum += rateShockAbsorber + rateDriveshaft + rateSteeringRack;
+      // Sum all dynamic service amounts
+      for (const s of otherServices) {
+        sum += Number(s.amount) || 0;
+      }
+      // Set total, but allow override (parse math expr if user enters)
+      const amtField = document.getElementById('amountBilled');
+      if (amtField && amtField.value && isNaN(amtField.value)) {
+        try {
+          amtField.value = eval(amtField.value.replace(/[^-()\d/*+.]/g, ''));
+        } catch {}
+      } else {
+        amtField.value = sum;
+      }
+    }
+
+    // ===== Date Default on Load =====
+    document.addEventListener('DOMContentLoaded', function() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('date').value = today;
+    });
+
+    // ===== FORM SUBMIT =====
+    document.getElementById('submitBtn').addEventListener('click', function() {
+      showLoading();
+      setTimeout(() => {
+        updateTotalAmount();
+
+        const carNumber = document.getElementById('carNumber').value.trim();
+        if (!carNumber) {
+          document.getElementById('carNumberError').textContent = 'Car number is required';
+          hideLoading();
+          return;
+        } else {
+          document.getElementById('carNumberError').textContent = '';
+        }
+
+        // Prepare work rows
+        const staticRows = getStaticWorkRows();
+        const dynamicRows = otherServices.map(row => ({
+          workType: "Spare & Service",
+          detail: row.service,
+          sparePart: (document.getElementById('carModel').value + ' ' + (row.sparePart || '')).trim(),
+          vendor: row.vendor,
+          rate: row.amount
+        })).filter(r => r.detail && r.sparePart);
+
+        const formData = {
+          customerName: document.getElementById('customerName').value.trim(),
+          phone: document.getElementById('phone').value.trim(),
+          carNumber: carNumber,
+          carModel: document.getElementById('carModel').value.trim(),
+          place: document.getElementById('place').value.trim(),
+          source: document.getElementById('source').value,
+          date: document.getElementById('date').value,
+          amountBilled: document.getElementById('amountBilled').value.trim(),
+          modeOfPayment: document.getElementById('modeOfPayment').value,
+          paidTo: document.getElementById('paidTo').value,
+          workRows: [...staticRows, ...dynamicRows]
+        };
+
+        google.script.run
+          .withSuccessHandler(function(response) {
+            hideLoading();
+            alert(response.message);
+            if (response.success) {
+              document.getElementById('jobId').value = response.jobId;
+              // DO NOT show updateBtn after submit!
+              document.getElementById('updateBtn').style.display = 'none';
+            }
+          })
+          .withFailureHandler(function(error) {
+            hideLoading();
+            alert('Error: ' + error.message);
+          })
+          .submitFormData(formData);
+      }, 200);
+    });
+
+    // ===== UPDATE BUTTON =====
+    document.getElementById('updateBtn').addEventListener('click', function() {
+      showLoading();
+      setTimeout(() => {
+        const carNumber = document.getElementById('carNumber').value.trim();
+        const jobId = document.getElementById('jobId').value;
+        if (!carNumber) {
+          document.getElementById('carNumberError').textContent = 'Car number is required for update';
+          hideLoading();
+          return;
+        } else {
+          document.getElementById('carNumberError').textContent = '';
+        }
+        if (!jobId) {
+          alert('Cannot update - no existing record found');
+          hideLoading();
+          return;
+        }
+
+        // Prepare work rows
+        const staticRows = getStaticWorkRows();
+        const dynamicRows = otherServices.map(row => ({
+          workType: "Spare & Service",
+          detail: row.service,
+          sparePart: (document.getElementById('carModel').value + ' ' + (row.sparePart || '')).trim(),
+          vendor: row.vendor,
+          rate: row.amount
+        })).filter(r => r.detail && r.sparePart);
+
+        const formData = {
+          jobId: jobId,
+          customerName: document.getElementById('customerName').value.trim(),
+          phone: document.getElementById('phone').value.trim(),
+          carNumber: carNumber,
+          carModel: document.getElementById('carModel').value.trim(),
+          place: document.getElementById('place').value.trim(),
+          source: document.getElementById('source').value,
+          date: document.getElementById('date').value,
+          amountBilled: document.getElementById('amountBilled').value.trim(),
+          modeOfPayment: document.getElementById('modeOfPayment').value,
+          paidTo: document.getElementById('paidTo').value,
+          workRows: [...staticRows, ...dynamicRows]
+        };
+
+        google.script.run
+          .withSuccessHandler(function(response) {
+            hideLoading();
+            alert(response.message);
+          })
+          .withFailureHandler(function(error) {
+            hideLoading();
+            alert('Error: ' + error.message);
+          })
+          .updateFormData(formData);
+      }, 200);
+    });
+
+    // ===== FETCH BUTTON =====
+document.getElementById('fetchBtn').addEventListener('click', function() {
+  showLoading();
+  
+  const criteria = {
+    customerName: document.getElementById('customerName').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    carNumber: document.getElementById('carNumber').value.trim()
+  };
+
+  google.script.run
+    .withSuccessHandler(resp => {
+      hideLoading();
+      
+      if (!resp) {
+        alert('No matching customer found');
+        return;
+      }
+
+      // 1. POPULATE MAIN CUSTOMER FIELDS
+      document.getElementById('jobId').value = resp.jobId;
+      document.getElementById('customerName').value = resp.customerName || '';
+      document.getElementById('phone').value = resp.phone || '';
+      document.getElementById('carNumber').value = resp.carNumber || '';
+      document.getElementById('carModel').value = resp.carModel || '';
+      document.getElementById('place').value = resp.place || '';
+      document.getElementById('source').value = resp.source || '';
+      document.getElementById('date').value = resp.date || '';
+      document.getElementById('amountBilled').value = resp.amountBilled || '';
+      document.getElementById('modeOfPayment').value = resp.modeOfPayment || '';
+      document.getElementById('paidTo').value = resp.paidTo || '';
+
+      // 2. RESET ALL WORK SECTIONS
+      // Static work
+      document.getElementById('chkShockAbsorber').checked = false;
+      document.getElementById('ddShockAbsorber').style.display = 'none';
+      document.getElementById('rateShockAbsorber').value = '';
+      
+      document.getElementById('chkDriveshaft').checked = false;
+      document.getElementById('ddDriveshaft').style.display = 'none';
+      document.getElementById('rateDriveshaft').value = '';
+      
+      document.getElementById('chkSteeringRack').checked = false;
+      document.getElementById('rateSteeringRack').value = '';
+
+      // Dynamic work
+      otherServices = [];
+      otherList.innerHTML = '';
+      document.getElementById('chkOtherServicesMain').checked = false;
+      otherSection.style.display = 'none';
+
+      // 3. POPULATE WORK ROWS
+      if (resp.workRows && resp.workRows.length > 0) {
+        resp.workRows.forEach(row => {
+          // Handle static work rows
+          if (["Shock Absorber", "DriveShaft", "Steering Rack Service"].includes(row.workType)) {
+            switch(row.workType) {
+              case 'Shock Absorber':
+                document.getElementById('chkShockAbsorber').checked = true;
+                document.getElementById('ddShockAbsorber').style.display = 'block';
+                document.getElementById('ddShockAbsorber').value = row.detail || '';
+                document.getElementById('rateShockAbsorber').value = row.rate || '';
+                break;
+                
+              case 'DriveShaft':
+                document.getElementById('chkDriveshaft').checked = true;
+                document.getElementById('ddDriveshaft').style.display = 'block';
+                document.getElementById('ddDriveshaft').value = row.detail || '';
+                document.getElementById('rateDriveshaft').value = row.rate || '';
+                break;
+                
+              case 'Steering Rack Service':
+                document.getElementById('chkSteeringRack').checked = true;
+                document.getElementById('rateSteeringRack').value = row.rate || '';
+                break;
+            }
+          } 
+          // Handle dynamic work rows
+          else {
+            document.getElementById('chkOtherServicesMain').checked = true;
+            otherSection.style.display = 'block';
+            addOtherServiceRow({
+              service: row.detail || '',
+              sparePart: row.sparePart || '',
+              vendor: row.vendor || '',
+              amount: row.rate || ''
+            });
+          }
+        });
+      }
+
+      // Show update button
+      document.getElementById('updateBtn').style.display = 'block';
+    })
+    .withFailureHandler(err => {
+      hideLoading();
+      alert('Error fetching data: ' + err.message);
+    })
+    .fetchCustomerData(criteria);
+});
+
+    // ===== CLEAR BUTTON =====
+    document.getElementById('clearBtn').addEventListener('click', function() {
+      showLoading();
+      setTimeout(() => {
+        clearForm(true);
+        hideLoading();
+      }, 300);
+    });
+
+    function clearForm(clearJobId) {
+      document.getElementById('customerForm').reset();
+      // Remove all dynamic service rows
+      otherServices = [];
+      otherList.innerHTML = '';
+      otherSection.style.display = 'none';
+      document.getElementById('chkOtherServicesMain').checked = false;
+      document.getElementById('carNumberError').textContent = '';
+      if (clearJobId) {
+        document.getElementById('jobId').value = '';
+        document.getElementById('updateBtn').style.display = 'none';
+      }
+      // Set today's date
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('date').value = today;
+    }
+
+    // ===== AmountBilled Manual Override (Math support) =====
+    document.getElementById('amountBilled').addEventListener('blur', function() {
+      if (this.value && isNaN(this.value)) {
+        try {
+          this.value = eval(this.value.replace(/[^-()\d/*+.]/g, ''));
+        } catch {}
+      }
+    });
+
+    // Recalculate on static rates change
+    document.querySelectorAll('#rateShockAbsorber, #rateDriveshaft, #rateSteeringRack').forEach(input => {
+      input.addEventListener('input', updateTotalAmount);
+    });
+
+  </script>
+</body>
+</html>

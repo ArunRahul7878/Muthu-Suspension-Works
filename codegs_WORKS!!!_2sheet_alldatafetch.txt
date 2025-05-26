@@ -1,0 +1,164 @@
+// === Serve the HTML UI ===
+function doGet() {
+  return HtmlService.createHtmlOutputFromFile('index')
+    .setTitle('Customer Job Entry Form')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+// === SUBMIT NEW ENTRY ===
+function submitFormData(formData) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const main = ss.getSheetByName('Customer Data and Job Sheet');
+    const work = ss.getSheetByName('Work Committed');
+    if (!main || !work) throw new Error("Sheets missing!");
+
+    // Find next Job ID
+    const lastRow = main.getLastRow();
+    const nextId = lastRow > 1 ? Number(main.getRange(lastRow, 1).getValue()) + 1 : 1;
+
+    // Write main customer/job row
+    main.appendRow([
+      nextId,
+      formData.customerName,
+      formData.phone,
+      formData.carNumber,
+      formData.carModel,
+      formData.place,
+      formData.source,
+      formData.date,
+      formData.amountBilled,
+      formData.modeOfPayment,
+      formData.paidTo
+    ]);
+
+    // Write all work rows (static + dynamic)
+    (formData.workRows || []).forEach(item => {
+      work.appendRow([
+        nextId,
+        item.workType   || '',
+        item.detail     || '',
+        item.sparePart  || '',
+        item.rate       || '',
+        item.vendor     || '',
+        formData.date   || ''
+      ]);
+    });
+
+    return { success: true, message: `Job ${nextId} submitted`, jobId: nextId };
+  } catch (e) {
+    return { success: false, message: e.message };
+  }
+}
+
+// === UPDATE EXISTING ENTRY ===
+function updateFormData(formData) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const main = ss.getSheetByName('Customer Data and Job Sheet');
+    const work = ss.getSheetByName('Work Committed');
+    if (!main || !work) throw new Error("Sheets missing!");
+    const jobId = Number(formData.jobId);
+
+    // Update main row
+    const data = main.getDataRange().getValues();
+    let rowToUpdate = null;
+    for (let i = 1; i < data.length; i++) {
+      if (Number(data[i][0]) === jobId) { rowToUpdate = i + 1; break; }
+    }
+    if (!rowToUpdate) throw new Error("Job ID not found");
+
+    main.getRange(rowToUpdate, 2, 1, 10).setValues([[
+      formData.customerName,
+      formData.phone,
+      formData.carNumber,
+      formData.carModel,
+      formData.place,
+      formData.source,
+      formData.date,
+      formData.amountBilled,
+      formData.modeOfPayment,
+      formData.paidTo
+    ]]);
+
+    // Remove all existing work rows for this job
+    const allWork = work.getDataRange().getValues();
+    const header = allWork.shift();
+    const keep = allWork.filter(r => Number(r[0]) !== jobId);
+    work.clearContents();
+    work.appendRow(header);
+    keep.forEach(r => work.appendRow(r));
+
+    // Add new work rows
+    (formData.workRows || []).forEach(item => {
+      work.appendRow([
+        jobId,
+        item.workType   || '',
+        item.detail     || '',
+        item.sparePart  || '',
+        item.rate       || '',
+        item.vendor     || '',
+        formData.date   || ''
+      ]);
+    });
+
+    return { success: true, message: `Job ${jobId} updated` };
+  } catch (e) {
+    return { success: false, message: e.message };
+  }
+}
+
+// === FETCH ENTRY (MAIN SHEET ONLY, IGNORE WORK COMMITTED) ===
+// === SIMPLIFIED FETCH FUNCTION ===
+function fetchCustomerData(searchCriteria) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const main = ss.getSheetByName('Customer Data and Job Sheet');
+  const work = ss.getSheetByName('Work Committed');
+  const timezone = Session.getScriptTimeZone();
+
+  if (!main || !work) throw new Error("Required sheets not found");
+
+  // 1. FIND MAIN CUSTOMER RECORD
+  const mainData = main.getDataRange().getValues().slice(1);
+  const foundRecord = mainData.find(row => 
+    (searchCriteria.carNumber && String(row[3]||'').trim().toLowerCase() === searchCriteria.carNumber.trim().toLowerCase()) ||
+    (searchCriteria.phone && String(row[2]||'').trim() === searchCriteria.phone.trim()) ||
+    (searchCriteria.customerName && String(row[1]||'').trim().toLowerCase() === searchCriteria.customerName.trim().toLowerCase())
+  );
+
+  if (!foundRecord) return null;
+
+  const jobId = foundRecord[0];
+
+  // 2. FETCH ALL WORK ROWS (BOTH STATIC AND DYNAMIC)
+  const workData = work.getDataRange().getValues().slice(1);
+  const workRows = workData
+    .filter(row => Number(row[0]) === jobId)
+    .map(row => ({
+      workType: row[1],
+      detail: row[2],
+      sparePart: row[3],
+      rate: row[4],
+      vendor: row[5],
+      date: row[6] ? Utilities.formatDate(new Date(row[6]), timezone, "yyyy-MM-dd") : ''
+    }));
+
+  // 3. RETURN COMPLETE DATA
+  return {
+    // Main customer data
+    jobId: jobId,
+    customerName: foundRecord[1],
+    phone: foundRecord[2],
+    carNumber: foundRecord[3],
+    carModel: foundRecord[4],
+    place: foundRecord[5],
+    source: foundRecord[6],
+    date: foundRecord[7] ? Utilities.formatDate(new Date(foundRecord[7]), timezone, "yyyy-MM-dd") : '',
+    amountBilled: foundRecord[8],
+    modeOfPayment: foundRecord[9],
+    paidTo: foundRecord[10],
+    
+    // All work rows
+    workRows: workRows
+  };
+}
