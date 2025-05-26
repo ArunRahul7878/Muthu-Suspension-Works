@@ -432,6 +432,16 @@
             <label for="carModel">Car Model</label>
             <input type="text" id="carModel" placeholder="e.g. Hyundai Creta">
           </div>
+
+            <div class="form-group">
+          <label for="carBoard">Car Board Type</label>
+          <select id="carBoard" required>
+            <option value="">Select type</option>
+            <option value="Own">Own Board</option>
+            <option value="T">T Board</option>
+          </select>
+          </div>
+
           <div class="form-group">
             <label for="place">Place</label>
             <input type="text" id="place" placeholder="Enter location">
@@ -788,6 +798,7 @@
           phone: document.getElementById('phone').value.trim(),
           carNumber: carNumber,
           carModel: document.getElementById('carModel').value.trim(),
+          carBoard: document.getElementById('carBoard').value,
           place: document.getElementById('place').value.trim(),
           source: document.getElementById('source').value,
           date: document.getElementById('date').value,
@@ -850,6 +861,7 @@
           phone: document.getElementById('phone').value.trim(),
           carNumber: carNumber,
           carModel: document.getElementById('carModel').value.trim(),
+          carBoard: document.getElementById('carBoard').value,
           place: document.getElementById('place').value.trim(),
           source: document.getElementById('source').value,
           date: document.getElementById('date').value,
@@ -897,6 +909,7 @@ document.getElementById('fetchBtn').addEventListener('click', function() {
       document.getElementById('phone').value = resp.phone || '';
       document.getElementById('carNumber').value = resp.carNumber || '';
       document.getElementById('carModel').value = resp.carModel || '';
+      document.getElementById('carBoard').value = resp.carBoard || 'Own';
       document.getElementById('place').value = resp.place || '';
       document.getElementById('source').value = resp.source || '';
       document.getElementById('date').value = resp.date || '';
