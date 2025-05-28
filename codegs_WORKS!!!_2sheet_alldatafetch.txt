@@ -170,3 +170,37 @@ function fetchCustomerData(searchCriteria) {
     workRows: workRows
   };
 }
+
+function migrateWorkCommittedToJSON() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var committedSheet = ss.getSheetByName('Work Committed');
+  var outputSheet = ss.getSheetByName('Job Estimates JSON');
+
+  var data = committedSheet.getDataRange().getValues();
+  var headers = data[0];
+  var jobIdIdx = headers.indexOf('Job ID');
+  var groups = {};
+
+  // Group rows by Job ID
+  for (var i = 1; i < data.length; i++) {
+    var row = data[i];
+    var jobId = row[jobIdIdx];
+    if (!groups[jobId]) groups[jobId] = [];
+    groups[jobId].push(row);
+  }
+
+  // Prepare output: [Job ID, JSON string]
+  var out = [['Job ID', 'Line Items (JSON)']];
+  for (var jobId in groups) {
+    var items = groups[jobId].map(r => {
+      var obj = {};
+      headers.forEach((h, idx) => obj[h] = r[idx]);
+      return obj;
+    });
+    out.push([jobId, JSON.stringify(items)]);
+  }
+
+  // Write to new sheet
+  outputSheet.clear();
+  outputSheet.getRange(1, 1, out.length, out[0].length).setValues(out);
+}
