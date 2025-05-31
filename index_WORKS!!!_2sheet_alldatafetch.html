@@ -515,52 +515,37 @@
       </div>
 
       <!-- PAYMENT DETAILS -->
-      <div class="form-section">
-        <h3>Payment Details</h3>
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="date">Date</label>
-            <input type="date" id="date">
-          </div>
-          <div class="form-group amount-group">
-            <label for="amountBilled">Amount Billed (₹)</label>
-            <input type="number" id="amountBilled" placeholder="Enter total amount">
-            <button type="button" class="calculate-btn" onclick="updateTotalAmount()">
-              <i class="fas fa-calculator"></i> Recalculate
-            </button>
-          </div>
-          <div class="form-group">
-            <label for="modeOfPayment">Payment Mode</label>
-            <select id="modeOfPayment">
-              <option value="">Select payment mode</option>
-              <option>Cash</option>
-              <option>Gpay</option>
-              <option>Paytm</option>
-              <option>PhonePe</option>
-              <option>Bank Transfer</option>
-              <option>Credit Card</option>
-              <option>Debit Card</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="paidTo">Paid To</label>
-            <select id="paidTo">
-              <option value="">Select recipient</option>
-              <option>Cash</option>
-              <option>Arun</option>
-              <option>Elangovan</option>
-              <option>Priya</option>
-              <option>Sumathi</option>
-              <option>Lokesh</option>
-              <option>Surya</option>
-            </select>
-          </div>
-        </div>
-      </div>
+<div class="form-section">
+  <h3>Payment Details</h3>
+  <div class="form-grid">
+    <div class="form-group">
+      <label for="date">Date</label>
+      <input type="date" id="date">
+    </div>
+    <div class="form-group amount-group">
+      <label for="amountBilled">Amount Billed (₹)</label>
+      <input type="number" id="amountBilled" placeholder="Enter total amount" oninput="validatePaymentSplits()">
+      <button type="button" class="calculate-btn" onclick="updateTotalAmount()">
+        <i class="fas fa-calculator"></i> Recalculate
+      </button>
+    </div>
+  </div>
 
-      <div class="loading" id="loadingIndicator">
-        Processing your request...
-      </div>
+  <!-- Dynamic Payment Splits Section -->
+  <div class="form-group" style="margin-top:20px;">
+    <label>Payment Splits</label>
+    <div id="paymentSplits"></div>
+    <button type="button" class="calculate-btn" onclick="addPaymentSplitRow()">
+      <i class="fas fa-plus-circle"></i> Add Payment Split
+    </button>
+    <span id="splitSumError" class="error" style="display:block;margin-top:10px;"></span>
+  </div>
+</div>
+
+<div class="loading" id="loadingIndicator">
+  Processing your request...
+</div>
+
 
       <!-- ACTION BUTTONS -->
       <div class="buttons">
@@ -581,6 +566,14 @@
   </div>
 
   <script>
+
+    function formatDateForInput(dateStr) {
+  // Converts dd/MM/yyyy → yyyy-MM-dd for input field
+  const parts = dateStr.split('/');
+  if (parts.length !== 3) return '';
+  return `${parts[2]}-${parts[1]}-${parts[0]}`;
+}
+
     // ===== Loading Indicator =====
     function showLoading() {
       document.getElementById('loadingIndicator').style.display = 'block';
@@ -769,7 +762,7 @@
       document.getElementById('date').value = today;
     });
 
-    // ===== FORM SUBMIT =====
+  // ===== FORM SUBMIT =====
     document.getElementById('submitBtn').addEventListener('click', function() {
       showLoading();
       setTimeout(() => {
@@ -804,8 +797,8 @@
           source: document.getElementById('source').value,
           date: document.getElementById('date').value,
           amountBilled: document.getElementById('amountBilled').value.trim(),
-          modeOfPayment: document.getElementById('modeOfPayment').value,
-          paidTo: document.getElementById('paidTo').value,
+          formData.paymentSplits = collectPaymentSplitsFromUI();
+
           workRows: [...staticRows, ...dynamicRows]
         };
 
@@ -913,7 +906,7 @@ document.getElementById('fetchBtn').addEventListener('click', function() {
       document.getElementById('carBoard').value = resp.carBoard || 'Own';
       document.getElementById('place').value = resp.place || '';
       document.getElementById('source').value = resp.source || '';
-      document.getElementById('date').value = resp.date || '';
+      document.getElementById('date').value = formatDateForInput(resp.date || '');
       document.getElementById('amountBilled').value = resp.amountBilled || '';
       document.getElementById('modeOfPayment').value = resp.modeOfPayment || '';
       document.getElementById('paidTo').value = resp.paidTo || '';
@@ -987,6 +980,7 @@ document.getElementById('fetchBtn').addEventListener('click', function() {
     .fetchCustomerData(criteria);
 });
 
+
     // ===== CLEAR BUTTON =====
     document.getElementById('clearBtn').addEventListener('click', function() {
       showLoading();
@@ -1026,6 +1020,122 @@ document.getElementById('fetchBtn').addEventListener('click', function() {
     document.querySelectorAll('#rateShockAbsorber, #rateDriveshaft, #rateSteeringRack').forEach(input => {
       input.addEventListener('input', updateTotalAmount);
     });
+
+    let paymentSplitIds = [];
+
+// Add a payment split row (optionally pre-filled)
+function addPaymentSplitRow(data = {}) {
+  const id = Date.now() + Math.floor(Math.random() * 10000);
+  const container = document.getElementById('paymentSplits');
+
+  const row = document.createElement('div');
+  row.className = 'form-grid';
+  row.style.marginBottom = '10px';
+  row.id = `payment-split-${id}`;
+
+  row.innerHTML = `
+    <div class="form-group">
+      <select class="split-mode">
+        <option value="">Select payment mode</option>
+        <option>Cash</option>
+        <option>Gpay</option>
+        <option>Paytm</option>
+        <option>PhonePe</option>
+        <option>Bank Transfer</option>
+        <option>Credit Card</option>
+        <option>Debit Card</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <select class="split-paid-to">
+        <option value="">Select recipient</option>
+        <option>Cash</option>
+        <option>Arun</option>
+        <option>Elangovan</option>
+        <option>Priya</option>
+        <option>Sumathi</option>
+        <option>Lokesh</option>
+        <option>Surya</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <input type="number" class="split-amount" placeholder="Amount (₹)" min="1" oninput="validatePaymentSplits()">
+    </div>
+    <button type="button" class="remove-btn" onclick="removePaymentSplitRow(${id})">
+      <i class="fas fa-times"></i>
+    </button>
+  `;
+
+  container.appendChild(row);
+
+  // Prefill values if given (for fetch/edit)
+  row.querySelector('.split-mode').value = data.mode || '';
+  row.querySelector('.split-paid-to').value = data.to || '';
+  row.querySelector('.split-amount').value = data.amount || '';
+
+  paymentSplitIds.push(id);
+
+  // Validate after adding
+  validatePaymentSplits();
+}
+
+// Remove a payment split row
+function removePaymentSplitRow(id) {
+  const row = document.getElementById(`payment-split-${id}`);
+  if (row) row.remove();
+  paymentSplitIds = paymentSplitIds.filter(pid => pid !== id);
+  validatePaymentSplits();
+}
+
+// Validate that the sum does not exceed Amount Billed
+function validatePaymentSplits() {
+  const amountBilled = Number(document.getElementById('amountBilled').value) || 0;
+  let splitSum = 0;
+  let error = '';
+
+  // Loop all split-amount fields
+  document.querySelectorAll('#paymentSplits .split-amount').forEach(input => {
+    splitSum += Number(input.value) || 0;
+  });
+
+  if (splitSum > amountBilled) {
+    error = `Total split amount (${splitSum}) exceeds Amount Billed (${amountBilled})!`;
+  }
+
+  document.getElementById('splitSumError').textContent = error;
+  document.getElementById('splitSumError').style.display = error ? 'block' : 'none';
+
+  // (Optional) visually mark fields if invalid
+  document.querySelectorAll('#paymentSplits .split-amount').forEach(input => {
+    input.style.borderColor = (splitSum > amountBilled) ? '#f44336' : '';
+  });
+
+  // Prevent form submit/update if invalid (add logic in your submit handler)
+  return splitSum <= amountBilled;
+}
+
+// By default, add one payment split on load
+document.addEventListener('DOMContentLoaded', function() {
+  if (paymentSplitIds.length === 0) addPaymentSplitRow();
+});
+
+// Collects payment splits from UI into an array of objects
+function collectPaymentSplitsFromUI() {
+  const splits = [];
+  document.querySelectorAll('#paymentSplits > .form-grid').forEach(row => {
+    const mode = row.querySelector('.split-mode')?.value || '';
+    const to   = row.querySelector('.split-paid-to')?.value || '';
+    const amt  = row.querySelector('.split-amount')?.value || '';
+    if (mode && to && amt) {
+      splits.push({
+        mode: mode,
+        to: to,
+        amount: Number(amt)
+      });
+    }
+  });
+  return splits;
+}
 
   </script>
 </body>
