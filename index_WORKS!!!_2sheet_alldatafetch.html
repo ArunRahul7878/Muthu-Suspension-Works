@@ -455,6 +455,7 @@
               <option value="Google Search">Google Search</option>
               <option value="JustDial">JustDial</option>
               <option value="Youtube">YouTube</option>
+              <option value="Youtube">Fault</option>
             </select>
           </div>
         </div>
@@ -762,121 +763,118 @@
       document.getElementById('date').value = today;
     });
 
-  // ===== FORM SUBMIT =====
-    document.getElementById('submitBtn').addEventListener('click', function() {
-      showLoading();
-      setTimeout(() => {
-        updateTotalAmount();
+ document.getElementById('submitBtn').addEventListener('click', function() {
+  showLoading();
+  setTimeout(() => {
+    updateTotalAmount();
 
-        const carNumber = document.getElementById('carNumber').value.trim();
-        if (!carNumber) {
-          document.getElementById('carNumberError').textContent = 'Car number is required';
-          hideLoading();
-          return;
-        } else {
-          document.getElementById('carNumberError').textContent = '';
+    const carNumber = document.getElementById('carNumber').value.trim();
+    if (!carNumber) {
+      document.getElementById('carNumberError').textContent = 'Car number is required';
+      hideLoading();
+      return;
+    } else {
+      document.getElementById('carNumberError').textContent = '';
+    }
+
+    // Prepare work rows
+    const staticRows = getStaticWorkRows();
+    const dynamicRows = otherServices.map(row => ({
+      workType: "Spare & Service",
+      detail: row.service,
+      sparePart: (document.getElementById('carModel').value + ' ' + (row.sparePart || '')).trim(),
+      vendor: row.vendor,
+      rate: row.amount
+    })).filter(r => r.detail && r.sparePart);
+
+    const formData = {
+      customerName: document.getElementById('customerName').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      carNumber: carNumber,
+      carModel: document.getElementById('carModel').value.trim(),
+      carBoard: document.getElementById('carBoard').value,
+      place: document.getElementById('place').value.trim(),
+      source: document.getElementById('source').value,
+      date: document.getElementById('date').value,
+      amountBilled: document.getElementById('amountBilled').value.trim(),
+      paymentSplits: collectPaymentSplitsFromUI(),
+      workRows: [...staticRows, ...dynamicRows]
+    };
+
+    google.script.run
+      .withSuccessHandler(function(response) {
+        hideLoading();
+        alert(response.message);
+        if (response.success) {
+          document.getElementById('jobId').value = response.jobId;
+          // DO NOT show updateBtn after submit!
+          document.getElementById('updateBtn').style.display = 'none';
         }
-
-        // Prepare work rows
-        const staticRows = getStaticWorkRows();
-        const dynamicRows = otherServices.map(row => ({
-          workType: "Spare & Service",
-          detail: row.service,
-          sparePart: (document.getElementById('carModel').value + ' ' + (row.sparePart || '')).trim(),
-          vendor: row.vendor,
-          rate: row.amount
-        })).filter(r => r.detail && r.sparePart);
-
-        const formData = {
-          customerName: document.getElementById('customerName').value.trim(),
-          phone: document.getElementById('phone').value.trim(),
-          carNumber: carNumber,
-          carModel: document.getElementById('carModel').value.trim(),
-          carBoard: document.getElementById('carBoard').value,
-          place: document.getElementById('place').value.trim(),
-          source: document.getElementById('source').value,
-          date: document.getElementById('date').value,
-          amountBilled: document.getElementById('amountBilled').value.trim(),
-          formData.paymentSplits = collectPaymentSplitsFromUI();
-
-          workRows: [...staticRows, ...dynamicRows]
-        };
-
-        google.script.run
-          .withSuccessHandler(function(response) {
-            hideLoading();
-            alert(response.message);
-            if (response.success) {
-              document.getElementById('jobId').value = response.jobId;
-              // DO NOT show updateBtn after submit!
-              document.getElementById('updateBtn').style.display = 'none';
-            }
-          })
-          .withFailureHandler(function(error) {
-            hideLoading();
-            alert('Error: ' + error.message);
-          })
-          .submitFormData(formData);
-      }, 200);
-    });
+      })
+      .withFailureHandler(function(error) {
+        hideLoading();
+        alert('Error: ' + error.message);
+      })
+      .submitFormData(formData);
+  }, 200);
+});
 
     // ===== UPDATE BUTTON =====
-    document.getElementById('updateBtn').addEventListener('click', function() {
-      showLoading();
-      setTimeout(() => {
-        const carNumber = document.getElementById('carNumber').value.trim();
-        const jobId = document.getElementById('jobId').value;
-        if (!carNumber) {
-          document.getElementById('carNumberError').textContent = 'Car number is required for update';
-          hideLoading();
-          return;
-        } else {
-          document.getElementById('carNumberError').textContent = '';
-        }
-        if (!jobId) {
-          alert('Cannot update - no existing record found');
-          hideLoading();
-          return;
-        }
+document.getElementById('updateBtn').addEventListener('click', function() {
+  showLoading();
+  setTimeout(() => {
+    const carNumber = document.getElementById('carNumber').value.trim();
+    const jobId = document.getElementById('jobId').value;
+    if (!carNumber) {
+      document.getElementById('carNumberError').textContent = 'Car number is required for update';
+      hideLoading();
+      return;
+    } else {
+      document.getElementById('carNumberError').textContent = '';
+    }
+    if (!jobId) {
+      alert('Cannot update - no existing record found');
+      hideLoading();
+      return;
+    }
 
-        // Prepare work rows
-        const staticRows = getStaticWorkRows();
-        const dynamicRows = otherServices.map(row => ({
-          workType: "Spare & Service",
-          detail: row.service,
-          sparePart: (document.getElementById('carModel').value + ' ' + (row.sparePart || '')).trim(),
-          vendor: row.vendor,
-          rate: row.amount
-        })).filter(r => r.detail && r.sparePart);
+    // Prepare work rows
+    const staticRows = getStaticWorkRows();
+    const dynamicRows = otherServices.map(row => ({
+      workType: "Spare & Service",
+      detail: row.service,
+      sparePart: (document.getElementById('carModel').value + ' ' + (row.sparePart || '')).trim(),
+      vendor: row.vendor,
+      rate: row.amount
+    })).filter(r => r.detail && r.sparePart);
 
-        const formData = {
-          jobId: jobId,
-          customerName: document.getElementById('customerName').value.trim(),
-          phone: document.getElementById('phone').value.trim(),
-          carNumber: carNumber,
-          carModel: document.getElementById('carModel').value.trim(),
-          carBoard: document.getElementById('carBoard').value,
-          place: document.getElementById('place').value.trim(),
-          source: document.getElementById('source').value,
-          date: document.getElementById('date').value,
-          amountBilled: document.getElementById('amountBilled').value.trim(),
-          modeOfPayment: document.getElementById('modeOfPayment').value,
-          paidTo: document.getElementById('paidTo').value,
-          workRows: [...staticRows, ...dynamicRows]
-        };
+    const formData = {
+      jobId: jobId,
+      customerName: document.getElementById('customerName').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      carNumber: carNumber,
+      carModel: document.getElementById('carModel').value.trim(),
+      carBoard: document.getElementById('carBoard').value,
+      place: document.getElementById('place').value.trim(),
+      source: document.getElementById('source').value,
+      date: document.getElementById('date').value,
+      amountBilled: document.getElementById('amountBilled').value.trim(),
+      paymentSplits: collectPaymentSplitsFromUI(),
+      workRows: [...staticRows, ...dynamicRows]
+    };
 
-        google.script.run
-          .withSuccessHandler(function(response) {
-            hideLoading();
-            alert(response.message);
-          })
-          .withFailureHandler(function(error) {
-            hideLoading();
-            alert('Error: ' + error.message);
-          })
-          .updateFormData(formData);
-      }, 200);
-    });
+    google.script.run
+      .withSuccessHandler(function(response) {
+        hideLoading();
+        alert(response.message);
+      })
+      .withFailureHandler(function(error) {
+        hideLoading();
+        alert('Error: ' + error.message);
+      })
+      .updateFormData(formData);
+  }, 200);
+});
 
     // ===== FETCH BUTTON =====
 document.getElementById('fetchBtn').addEventListener('click', function() {
@@ -908,8 +906,6 @@ document.getElementById('fetchBtn').addEventListener('click', function() {
       document.getElementById('source').value = resp.source || '';
       document.getElementById('date').value = formatDateForInput(resp.date || '');
       document.getElementById('amountBilled').value = resp.amountBilled || '';
-      document.getElementById('modeOfPayment').value = resp.modeOfPayment || '';
-      document.getElementById('paidTo').value = resp.paidTo || '';
 
       // 2. RESET ALL WORK SECTIONS
       // Static work
@@ -929,6 +925,21 @@ document.getElementById('fetchBtn').addEventListener('click', function() {
       otherList.innerHTML = '';
       document.getElementById('chkOtherServicesMain').checked = false;
       otherSection.style.display = 'none';
+
+      // Payment splits
+      document.getElementById('paymentSplits').innerHTML = '';
+      paymentSplitIds = [];
+      if (resp.paymentSplits && resp.paymentSplits.length > 0) {
+        resp.paymentSplits.forEach(split => {
+          addPaymentSplitRow({
+            mode: split.mode,
+            to: split.to,
+            amount: split.amount
+          });
+        });
+      } else {
+        addPaymentSplitRow(); // Add one empty row by default
+      }
 
       // 3. POPULATE WORK ROWS
       if (resp.workRows && resp.workRows.length > 0) {
@@ -979,6 +990,7 @@ document.getElementById('fetchBtn').addEventListener('click', function() {
     })
     .fetchCustomerData(criteria);
 });
+
 
 
     // ===== CLEAR BUTTON =====
@@ -1135,6 +1147,37 @@ function collectPaymentSplitsFromUI() {
     }
   });
   return splits;
+}
+
+// Clears and populates payment splits UI on fetch
+function renderPaymentSplits(splits) {
+  // Clear existing
+  document.getElementById('paymentSplits').innerHTML = '';
+  paymentSplitIds = [];
+  // If none, add one blank
+  if (!splits || !splits.length) {
+    addPaymentSplitRow();
+    return;
+  }
+  splits.forEach(split => addPaymentSplitRow(split));
+}
+// Clears and populates "Other Services" dynamic UI on fetch
+function renderOtherServices(services) {
+  otherServices = [];
+  otherList.innerHTML = '';
+  if (!services || !services.length) {
+    otherSection.style.display = 'none';
+    document.getElementById('chkOtherServicesMain').checked = false;
+    return;
+  }
+  document.getElementById('chkOtherServicesMain').checked = true;
+  otherSection.style.display = 'block';
+  services.forEach(row => addOtherServiceRow({
+    service: row.detail || '',
+    sparePart: row.sparePart || '',
+    vendor: row.vendor || '',
+    amount: row.rate || ''
+  }));
 }
 
   </script>
